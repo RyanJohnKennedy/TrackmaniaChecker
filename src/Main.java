@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public class Main {
 
     public static Player players;
