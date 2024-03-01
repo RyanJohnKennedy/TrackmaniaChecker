@@ -2,9 +2,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -45,13 +43,10 @@ public class HttpConnection {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            System.out.println(response.toString());
             output = response.toString();
 
             JSONObject obj = new JSONObject(response.toString());
             token = obj.getString("access_token");
-            System.out.println(output);
-            System.out.println("API Key: " + token);
 
         }
         } catch (Exception e) {
@@ -61,23 +56,61 @@ public class HttpConnection {
         return output;
     }
 
-    public static JSONObject HttpGETCampaign(){
+    public static JSONObject HttpGETPlayer(String playerName){
         JSONObject obj = null;
 
         try {
             // Specify the URL
-            URL url = new URL("https://meet.trackmania.nadeo.club/api/cup-of-the-day/current");
+            URL url = new URL("https://api.trackmania.com/api/display-names/account-ids?displayName[]=" + playerName);
 
             // Open a connection
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", "Bearer " + token);
+
             // Set request method to GET
-            //connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            //connection.setRequestProperty("Accept", "application/json");
             connection.setRequestMethod("GET");
 
             // Set Bearer token
-            //connection.setAuthenticator();
+            connection.setRequestProperty("Authorization", "Bearer " + token);
+
+            // Get the response code
+            int responseCode = connection.getResponseCode();
+
+            // Read the response
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // Print the response
+            System.out.println(response.toString());
+            obj = new JSONObject(response.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return obj;
+    }
+
+    public static JSONObject HttpGETCurrentCampaign(){
+        JSONObject obj = null;
+        System.out.println("1");
+        try {
+            // Specify the URL
+            URL url = new URL("https://prod.trackmania.core.nadeo.online/mapRecords/?accountIdList="
+                    + Main.players.ID
+                    + "&mapIdList=257b55af-ed21-425d-be5a-365b916413b9");
+
+            // Open a connection
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set request method to GET
+            connection.setRequestMethod("GET");
+
+            // Set Bearer token
+            connection.setRequestProperty("Authorization", "Bearer " + token);
 
             // Get the response code
             int responseCode = connection.getResponseCode();

@@ -2,11 +2,14 @@ import java.io.IOException;
 
 public class Main {
 
+    public static Player players;
     public static void main(String[] args) {
         HttpConnection.HttpInitialPOSTRequest();
-        HttpConnection.HttpGETCampaign();
 
-        System.out.println();
+        GUI gui = new GUI();
+
+
+
     }
 }
 
